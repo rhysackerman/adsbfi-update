@@ -12,10 +12,15 @@ trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 
 restartIfEnabled() {
+    # check if enabled
     if systemctl is-enabled "$1" &>/dev/null; then
             systemctl restart "$1"
     fi
 }
+
+packages="python3-dev python3-venv gcc make git libusb-1.0-0-dev libncurses5-dev librtlsdr-dev"
+apt_install="apt install -y --no-install-recommends --no-install-suggests $packages"
+$apt_install || apt update && $apt_install
 
 echo '########################################'
 echo 'FULL LOG ........'
@@ -38,6 +43,24 @@ cp -f readsb /usr/bin/adsbxfeeder
 cp -f readsb /usr/bin/adsbx-978
 cp -f readsb /usr/bin/readsb
 cp -f viewadsb /usr/bin/viewadsb
+
+
+echo 'make sure unprivileged users exist (readsb / adsbexchange) ......'
+USER=adsbexchange
+if ! id -u "${USER}" &>/dev/null
+then
+    adduser --system --home "/usr/local/share/$USER" --no-create-home --quiet "$USER"
+fi
+
+RUNAS=readsb
+if ! getent passwd "$RUNAS" >/dev/null
+then
+    adduser --system --home /usr/share/"$RUNAS" --no-create-home --quiet "$RUNAS"
+fi
+# plugdev required for bladeRF USB access
+adduser "$RUNAS" plugdev
+# dialout required for Mode-S Beast and GNS5894 ttyAMA0 access
+adduser "$RUNAS" dialout
 
 echo 'restarting services .......'
 restartIfEnabled readsb
@@ -62,11 +85,7 @@ if [[ -f /usr/local/share/adsbexchange/venv/bin/python3.7 ]] && command -v pytho
 then
     rm -rf "$VENV"
 fi
-apt install -y python3-venv >> /tmp/adsbx_update_log
 /usr/bin/python3 -m venv "$VENV"
-
-echo 'stopping mlat services .......'
-systemctl stop adsbexchange-mlat.service
 
 echo 'cloning to mlat-client /tmp .......'
 cd /tmp
@@ -103,6 +122,12 @@ restartIfEnabled adsbexchange-978-convert
 
 echo 'update tar1090 ...........'
 bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"  >> /tmp/adsbx_update_log
+
+
+# the following doesn't apply for chroot
+if ischroot; then
+    exit 0
+fi
 
 echo "#####################################"
 cat /boot/adsbx-uuid
