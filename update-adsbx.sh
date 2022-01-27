@@ -6,11 +6,6 @@ if [[ "$(id -u)" != "0" ]]; then
     exec sudo bash "$BASH_SOURCE"
 fi
 
-# keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-# echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
-
 
 restartIfEnabled() {
     # check if enabled
@@ -148,4 +143,5 @@ echo '             UPDATE COMPLETE'
 echo '      FULL LOG:  /tmp/adsbx_update_log'
 echo '--------------------------------------------'
 echo '--------------------------------------------'
-exit 0
+
+
