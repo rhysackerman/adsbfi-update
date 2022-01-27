@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+trap 'echo "[ERROR] Error in line $LINENO when executing: $BASH_COMMAND"' ERR
 
 if [[ "$(id -u)" != "0" ]]; then
     exec sudo bash "$BASH_SOURCE"
