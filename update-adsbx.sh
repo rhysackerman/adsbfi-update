@@ -18,9 +18,15 @@ restartIfEnabled() {
     fi
 }
 
-packages="python3-dev python3-venv gcc make git libusb-1.0-0-dev libncurses5-dev librtlsdr-dev"
-apt_install="apt install -y --no-install-recommends --no-install-suggests $packages"
-$apt_install || apt update && $apt_install
+function aptInstall() {
+    if ! apt install -y --no-install-recommends --no-install-suggests "$@"; then
+        apt update
+        apt install -y --no-install-recommends --no-install-suggests "$@"
+    fi
+}
+
+packages="git make gcc libusb-1.0-0-dev librtlsdr-dev libncurses5-dev zlib1g-dev python3-dev python3-venv"
+aptInstall $packages
 
 echo '########################################'
 echo 'FULL LOG ........'
