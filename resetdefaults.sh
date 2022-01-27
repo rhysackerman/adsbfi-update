@@ -7,8 +7,8 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 echo -e "\n\n  APT clean"
-apt-get autoremove
-apt-get clean
+apt-get autoremove -y
+apt-get clean -y
 
 echo -e "\n\n RESET UUID"
 rm /boot/adsbx-uuid
