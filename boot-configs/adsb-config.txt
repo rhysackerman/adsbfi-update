@@ -54,6 +54,3 @@ DUMP978="no"
 
 # Allow ADSBexchange staff to access this unit <br> remotely for troubleshooting via zerotier?
 ZEROTIER="no"
-
-# Run Graphana?
-PROMG="no"
