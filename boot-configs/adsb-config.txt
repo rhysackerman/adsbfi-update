@@ -23,11 +23,11 @@
 ##Southern Hemisphere, negative. <br>
 ##<a href="https://www.freemaptools.com/elevation-finder.htm" target="_blank">
 ##This site can be used to determine lat/lon and ground altitude.</a>
-LATITUDE="3.366016"
+LATITUDE="0.00000"
 
 # Longitude<br> East of Greenwich, UK - positive.<br>  
 ##West of Greenwich (including USA) - negative.
-LONGITUDE="-11.694583"
+LONGITUDE="0.00000"
 
 # Altitude of your antenna above MSL (mean sea level)<br>
 ##Meters Example: "1050m" no space between number and "m"<br>
