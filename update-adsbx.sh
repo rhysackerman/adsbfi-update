@@ -115,7 +115,7 @@ rm -f -R /tmp/uat2esnt
 git clone https://github.com/adsbxchange/uat2esnt.git >> /tmp/adsbx_update_log
 cd uat2esnt
 make  >> /tmp/adsbx_update_log
-cp -f uat2esnt /usr/local/bin/uat2esnt
+cp -T -f uat2esnt /usr/local/bin/uat2esnt
 cd /tmp
 rm -f -R /tmp/uat2esnt
 
