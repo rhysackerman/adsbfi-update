@@ -33,10 +33,4 @@ for file in *; do
 done
 popd
 
-echo -e "\n RESET PI PASSWORD TO DEFAULT"
-echo "pi:adsb123" | chpasswd
-
-echo -e "\n UNLOCKING UNIT UNTIL FIRST CONFIG"
-touch /boot/unlock
-
 exit 0
