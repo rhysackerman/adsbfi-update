@@ -75,7 +75,7 @@ rm -f -R /tmp/readsb
 
 echo 'updating adsbx stats .......'
 wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh >> /tmp/adsbx_update_log
-{ bash /tmp/axstats.sh; } >> /tmp/adsbx_update_log 2>&1
+{ bash /tmp/axstats.sh; } >> /tmp/adsbx_update_log
 
 echo 'cleaming up stats /tmp .......'
 rm -f /tmp/axstats.sh

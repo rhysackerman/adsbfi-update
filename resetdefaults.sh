@@ -26,11 +26,12 @@ rm /home/pi/.bash_history
 echo -e "\n RESET WPA_SUPPLICANT CONF"
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf
 
-cd /adsbexchange/boot-configs
+pushd /adsbexchange/boot-configs
 for file in *; do
     echo -e "\n RESET /boot/$file"
     cp --remove-destination -f -T "$file" "/boot/$file"
 done
+popd
 
 echo -e "\n RESET PI PASSWORD TO DEFAULT"
 echo "pi:adsb123" | chpasswd
