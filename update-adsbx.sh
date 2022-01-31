@@ -29,17 +29,23 @@ echo 'FULL LOG ........'
 echo 'located at /tmp/adsbx_update_log .......'
 echo '########################################'
 echo '..'
-echo 'cloning to decoder /tmp .......'
-cd /tmp
-rm -f -R /tmp/readsb
-git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git > /tmp/adsbx_update_log
+
+# let's do all of this in a clean directory:
+updir=/tmp/update-adsbx
+log=/tmp/adsbx_update_log
+
+rm -rf $updir
+mkdir -p $updir
+cd $updir
+
+rm -f $log
+
+git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
 
 echo 'compiling readsb (this can take a while) .......'
+
 cd readsb
-#make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes
-make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"  >> /tmp/adsbx_update_log
-
-
+make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"  >> $log
 echo 'copying new readsb binaries ......'
 cp -f readsb /usr/bin/adsbxfeeder
 cp -f readsb /usr/bin/adsbx-978
@@ -59,6 +65,7 @@ if ! getent passwd "$RUNAS" >/dev/null
 then
     adduser --system --home /usr/share/"$RUNAS" --no-create-home --quiet "$RUNAS"
 fi
+
 # plugdev required for bladeRF USB access
 adduser "$RUNAS" plugdev
 # dialout required for Mode-S Beast and GNS5894 ttyAMA0 access
@@ -69,19 +76,18 @@ restartIfEnabled readsb
 restartIfEnabled adsbexchange-feed
 restartIfEnabled adsbexchange-978
 
-echo 'cleaning up decoder .......'
-cd /tmp
-rm -f -R /tmp/readsb
+cd $updir
+rm -rf $updir/readsb
 
 echo 'updating adsbx stats .......'
-wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh >> /tmp/adsbx_update_log
-{ bash /tmp/axstats.sh; } >> /tmp/adsbx_update_log
+wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh >> $log
+bash /tmp/axstats.sh >> $log
 
 echo 'cleaming up stats /tmp .......'
 rm -f /tmp/axstats.sh
 rm -f -R /tmp/adsbexchange-stats-git
 
-echo 'cloning to python virtual environment for mlat-client .......'
+echo 'creating python virtual environment for mlat-client .......'
 VENV=/usr/local/share/adsbexchange/venv/
 if [[ -f /usr/local/share/adsbexchange/venv/bin/python3.7 ]] && command -v python3.9 &>/dev/null;
 then
@@ -89,44 +95,41 @@ then
 fi
 /usr/bin/python3 -m venv "$VENV"
 
-echo 'cloning to mlat-client /tmp .......'
-cd /tmp
-rm -f -R /tmp/mlat-client
-git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git >> /tmp/adsbx_update_log
+cd $updir
+echo 'cloning to mlat-client .......'
+git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git >> $log
 
 echo 'building and installing mlat-client to virtual-environment .......'
 cd mlat-client
-source /usr/local/share/adsbexchange/venv/bin/activate >> /tmp/adsbx_update_log
-python3 setup.py build >> /tmp/adsbx_update_log
-python3 setup.py install >> /tmp/adsbx_update_log
+source /usr/local/share/adsbexchange/venv/bin/activate >> $log
+python3 setup.py build >> $log
+python3 setup.py install >> $log
 
 echo 'starting services .......'
 restartIfEnabled adsbexchange-mlat
 
-echo 'cleaning up mlat-client .......'
-cd /tmp
-rm -f -R /tmp/mlat-client
-rm -f /usr/local/share/adsbexchange/venv/bin/fa-mlat-client
+cd $updir
+rm -f -R $updir/mlat-client
 
 echo 'update uat ...'
 
-cd /tmp
-rm -f -R /tmp/uat2esnt
-git clone https://github.com/adsbxchange/uat2esnt.git >> /tmp/adsbx_update_log
+cd $updir
+git clone https://github.com/adsbxchange/uat2esnt.git >> $log
 cd uat2esnt
-make uat2esnt >> /tmp/adsbx_update_log
+make uat2esnt >> $log
 cp -T -f uat2esnt /usr/local/bin/uat2esnt
-cd /tmp
-rm -f -R /tmp/uat2esnt
+
+cd $updir
+rm -f -R $updir/uat2esnt
 
 echo 'restart uat services .......'
 restartIfEnabled adsbexchange-978-convert
 
 echo 'update tar1090 ...........'
-bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"  >> /tmp/adsbx_update_log
+bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"  >> $log
 
 
-# the following doesn't apply for chroot
+# the following doesn't apply for chroot (image creation)
 if ischroot; then
     exit 0
 fi
@@ -140,8 +143,10 @@ echo "#####################################"
 echo '--------------------------------------------'
 echo '--------------------------------------------'
 echo '             UPDATE COMPLETE'
-echo '      FULL LOG:  /tmp/adsbx_update_log'
+echo '      FULL LOG:  $log'
 echo '--------------------------------------------'
 echo '--------------------------------------------'
 
 
+cd /tmp
+rm -rf $updir
