@@ -23,14 +23,21 @@ rm /etc/ssh/ssh_host_*
 echo -e "\n REMOVE BASH HISTORY"
 rm /home/pi/.bash_history
 
-echo -e "\n RESET WPA_SUPPLICANT CONF"
-rm -f /etc/wpa_supplicant/wpa_supplicant.conf
 
-pushd /adsbexchange/boot-configs
+# fail if this directory doesn't exist
+if ! [[ -d /adsbexchange/update/boot-configs ]]; then
+    exit 1
+fi
+
+pushd /adsbexchange/update/boot-configs
 for file in *; do
     echo -e "\n RESET /boot/$file"
     cp --remove-destination -f -T "$file" "/boot/$file"
 done
 popd
+
+echo -e "\n RESET WPA_SUPPLICANT CONF"
+rm -f /etc/wpa_supplicant/wpa_supplicant.conf
+
 
 exit 0
