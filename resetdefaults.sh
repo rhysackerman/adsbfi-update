@@ -29,12 +29,12 @@ if ! [[ -d /adsbexchange/update/boot-configs ]]; then
     exit 1
 fi
 
-pushd /adsbexchange/update/boot-configs
+pushd /adsbexchange/update/boot-configs &>/dev/null
 for file in *; do
     echo -e "\n RESET /boot/$file"
     cp --remove-destination -f -T "$file" "/boot/$file"
 done
-popd
+popd &>/dev/null
 
 echo -e "\n RESET WPA_SUPPLICANT CONF"
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf
