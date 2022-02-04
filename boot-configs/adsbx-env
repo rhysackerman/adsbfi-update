@@ -13,7 +13,7 @@ NET_OPTIONS="--net --net-heartbeat 60 --net-ro-size 1200 --net-ro-interval 0.1 \
 JSON_OPTIONS="--json-location-accuracy 2"
 
 INPUT="127.0.0.1:30005"
-RESULTS="--results beast,connect,localhost:30104 --results basestation,listen,31003"
+RESULTS="--results beast,connect,localhost:30104 --results basestation,listen,31003 --results beast,listen,30157"
 MLATSERVER="feed.adsbexchange.com:31090"
 INPUT_TYPE="dump1090"
 #INPUT_TYPE="dump1090 --privacy"
