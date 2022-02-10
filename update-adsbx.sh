@@ -45,7 +45,13 @@ git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
 echo 'compiling readsb (this can take a while) .......'
 
 cd readsb
-make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"  >> $log
+
+if dpkg --print-architecture | grep -qs armhf; then
+    make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"  >> $log
+else
+    make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes OPTIMIZE=""  >> $log
+fi
+
 echo 'copying new readsb binaries ......'
 cp -f readsb /usr/bin/adsbxfeeder
 cp -f readsb /usr/bin/adsbx-978
