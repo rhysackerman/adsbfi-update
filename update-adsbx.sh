@@ -6,6 +6,8 @@ if [[ "$(id -u)" != "0" ]]; then
     exec sudo bash "$BASH_SOURCE"
 fi
 
+# in case /var/log is full ... delete some logs
+echo test > /var/log/.test 2>/dev/null || rm -f /var/log/*.log
 
 restartIfEnabled() {
     # check if enabled
