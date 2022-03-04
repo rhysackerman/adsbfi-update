@@ -42,6 +42,22 @@ cd $updir
 
 rm -f $log
 
+git clone --quiet --depth 1 https://github.com/ADSBexchange/adsbx-update.git
+cd adsbx-update
+
+find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}'
+find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}'
+
+# enable services
+systemctl enable \
+    adsbexchange-first-run.service \
+    adsbx-zt-enable.service \
+    readsb.service \
+    adsbexchange-mlat.service \
+    adsbexchange-feed.service
+
+
+cd $updir
 git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
 
 echo 'compiling readsb (this can take a while) .......'
@@ -62,22 +78,17 @@ cp -f viewadsb /usr/bin/viewadsb
 
 
 echo 'make sure unprivileged users exist (readsb / adsbexchange) ......'
-USER=adsbexchange
-if ! id -u "${USER}" &>/dev/null
-then
-    adduser --system --home "/usr/local/share/$USER" --no-create-home --quiet "$USER"
-fi
-
-RUNAS=readsb
-if ! getent passwd "$RUNAS" >/dev/null
-then
-    adduser --system --home /usr/share/"$RUNAS" --no-create-home --quiet "$RUNAS"
-fi
+for USER in adsbexchange readsb; do
+    if ! id -u "${USER}" &>/dev/null
+    then
+        adduser --system --home "/usr/local/share/$USER" --no-create-home --quiet "$USER"
+    fi
+done
 
 # plugdev required for bladeRF USB access
-adduser "$RUNAS" plugdev
+adduser readsb plugdev
 # dialout required for Mode-S Beast and GNS5894 ttyAMA0 access
-adduser "$RUNAS" dialout
+adduser readsb dialout
 
 echo 'restarting services .......'
 restartIfEnabled readsb
