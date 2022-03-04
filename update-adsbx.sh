@@ -48,6 +48,8 @@ cd adsbx-update
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}'
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}'
 
+systemctl daemon-reload
+
 # enable services
 systemctl enable \
     adsbexchange-first-run.service \
@@ -55,7 +57,6 @@ systemctl enable \
     readsb.service \
     adsbexchange-mlat.service \
     adsbexchange-feed.service
-
 
 cd $updir
 git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
