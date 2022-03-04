@@ -8,7 +8,7 @@ After=adsbexchange-first-run.service
 [Service]
 EnvironmentFile=/boot/adsb-config.txt
 EnvironmentFile=/boot/adsbx-env
-User=pi
+User=adsbexchange
 ExecStart=/usr/local/bin/mlat.sh
 Type=simple
 Restart=on-failure

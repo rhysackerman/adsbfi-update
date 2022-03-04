@@ -7,7 +7,7 @@ After=adsbexchange-first-run.service
 [Service]
 EnvironmentFile=/boot/adsbx-978env
 SyslogIdentifier=adsbexchange-978-convert
-User=pi
+User=adsbexchange
 ExecStart=-/usr/local/bin/adsbexchange-978-convert.sh
 Type=simple
 Restart=always
