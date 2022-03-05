@@ -58,6 +58,14 @@ systemctl enable \
     adsbexchange-mlat.service \
     adsbexchange-feed.service
 
+# mask services we don't need on this image
+MASK="dump1090-fa dump1090 dump1090-mutability dump978-rb"
+for service in $MASK; do
+    systemctl disable $service || true
+    systemctl stop $service || true
+    systemctl mask $service || true
+done &>/dev/null
+
 cd $updir
 git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
 
