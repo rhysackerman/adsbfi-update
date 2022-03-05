@@ -10,6 +10,7 @@ After=adsbexchange-first-run.service
 [Service]
 EnvironmentFile=/boot/adsb-config.txt
 EnvironmentFile=/boot/adsbx-env
+SyslogIdentifier=readsb
 User=readsb
 RuntimeDirectory=readsb
 RuntimeDirectoryMode=0755
