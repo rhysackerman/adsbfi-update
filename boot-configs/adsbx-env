@@ -12,6 +12,9 @@ NET_OPTIONS="--net --net-heartbeat 60 --net-ro-size 1200 --net-ro-interval 0.1 \
         --net-bi-port 30004,30104 --net-bo-port 30005"
 JSON_OPTIONS="--json-location-accuracy 2"
 
+# uncomment (remove #) the following line to make the actual range outline persist reboots
+#JSON_OPTIONS="--json-location-accuracy 2 --range-outline-hours 8760 --write-state-only-on-exit --write-state=/var/globe_history"
+
 INPUT="127.0.0.1:30005"
 RESULTS="--results beast,connect,localhost:30104 --results basestation,listen,31003 --results beast,listen,30157"
 MLATSERVER="feed.adsbexchange.com:31090"
