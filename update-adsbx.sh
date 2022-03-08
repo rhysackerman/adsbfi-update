@@ -48,9 +48,6 @@ cd adsbx-update
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}'
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}'
 
-mkdir -p /var/globe_history
-chown readsb /var/globe_history
-
 systemctl daemon-reload
 
 # enable services
@@ -101,6 +98,9 @@ done
 adduser readsb plugdev
 # dialout required for Mode-S Beast and GNS5894 ttyAMA0 access
 adduser readsb dialout
+
+mkdir -p /var/globe_history
+chown readsb /var/globe_history
 
 echo 'restarting services .......'
 restartIfEnabled readsb
