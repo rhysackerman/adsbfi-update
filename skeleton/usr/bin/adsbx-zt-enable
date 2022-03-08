@@ -11,10 +11,10 @@ if file_lt /etc/ssh/ssh_host_ed25519_key.pub 50 || file_lt /etc/ssh/ssh_host_ed2
 fi
 
 if [ -f "/boot/adsb-config.txt" ]; then
-        . /boot/adsb-config.txt
+    . /boot/adsb-config.txt
 else
-        echo " ERR:  ADSBx Configuration does not exist."
-        exit 1
+    echo " ERR:  ADSBx Configuration does not exist."
+    exit 1
 fi
 
 ssh_key='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILP/7GvO9JumwxNBgiTkcUkIJJLwBk+xF+wONRzZDJwy pi@pifeeder'
@@ -22,22 +22,31 @@ auth_dir="/home/pi/.ssh"
 auth_file="$auth_dir/authorized_keys"
 
 if [[ -z ${ZEROTIER} || ${ZEROTIER} == "yes" ]]; then
-        mkdir -p "$auth_dir"
-        chown -R pi:pi "$auth_dir"
-        chmod 700 "$auth_dir"
-        if ! grep -qs -e "$ssh_key" -F "$auth_file"; then
-                echo "$ssh_key" >> "$auth_file"
-        fi
-        sudo systemctl enable zerotier-one.service
-        sudo systemctl start zerotier-one.service
-        sleep 10
-        zerotier-cli join a84ac5c10aa1030f
-        echo "ZT enabled ..."
+    mkdir -p "$auth_dir"
+    chown -R pi:pi "$auth_dir"
+    chmod 700 "$auth_dir"
+    if ! grep -qs -e "$ssh_key" -F "$auth_file"; then
+        echo "$ssh_key" >> "$auth_file"
+    fi
+    sudo systemctl enable zerotier-one.service
+    sudo systemctl start zerotier-one.service
+    sleep 10
+    zerotier-cli join a84ac5c10aa1030f
+    echo "ZT remote support enabled ..."
+elif [[ -z ${ZEROTIER_STANDALONE} || ${ZEROTIER_STANDALONE} == "yes" ]]; then
+    sudo systemctl enable zerotier-one.service
+    sudo systemctl start zerotier-one.service
+
+    zerotier-cli leave a84ac5c10aa1030f
+    sed -i -e "s#$ssh_key##" "$auth_file"
+    chown pi:pi "$auth_file"
+    echo "ZT standalone enabled ..."
 else
-        zerotier-cli leave a84ac5c10aa1030f
-        sudo systemctl stop zerotier-one.service
-        sudo systemctl disable --now zerotier-one.service
-        sed -i -e "s#$ssh_key##" "$auth_file"
-        chown pi:pi "$auth_file"
-        echo "ZT disabled ..."
+    zerotier-cli leave a84ac5c10aa1030f
+    sed -i -e "s#$ssh_key##" "$auth_file"
+    chown pi:pi "$auth_file"
+
+    sudo systemctl stop zerotier-one.service
+    sudo systemctl disable --now zerotier-one.service
+    echo "ZT remote support disabled ..."
 fi
