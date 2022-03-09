@@ -21,7 +21,7 @@ ssh_key='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILP/7GvO9JumwxNBgiTkcUkIJJLwBk+xF+w
 auth_dir="/home/pi/.ssh"
 auth_file="$auth_dir/authorized_keys"
 
-if [[ -z ${ZEROTIER} || ${ZEROTIER} == "yes" ]]; then
+if [[ ${ZEROTIER} == "yes" ]]; then
     mkdir -p "$auth_dir"
     chown -R pi:pi "$auth_dir"
     chmod 700 "$auth_dir"
@@ -33,7 +33,7 @@ if [[ -z ${ZEROTIER} || ${ZEROTIER} == "yes" ]]; then
     sleep 10
     zerotier-cli join a84ac5c10aa1030f
     echo "ZT remote support enabled ..."
-elif [[ -z ${ZEROTIER_STANDALONE} || ${ZEROTIER_STANDALONE} == "yes" ]]; then
+elif [[ ${ZEROTIER_STANDALONE} == "yes" ]]; then
     sudo systemctl enable zerotier-one.service
     sudo systemctl start zerotier-one.service
 
