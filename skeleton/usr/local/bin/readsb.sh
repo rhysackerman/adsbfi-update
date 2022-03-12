@@ -5,6 +5,8 @@ if [[ "$DUMP1090" == "no" ]]; then
 fi
 
 exec /usr/bin/readsb \
+    --net-api-port 30152 \
+    --net-json-port 30154 \
     --write-prom /run/readsb/stats.prom \
     --gain $GAIN \
     --lat $LATITUDE \
