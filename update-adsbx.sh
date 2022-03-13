@@ -48,6 +48,9 @@ cd adsbx-update
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}'
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}'
 
+# remove strange dhcpcd wait.conf in case it's there
+rm -f /etc/systemd/system/dhcpcd.service.d/wait.conf
+
 systemctl daemon-reload
 
 # enable services
@@ -56,7 +59,8 @@ systemctl enable \
     adsbx-zt-enable.service \
     readsb.service \
     adsbexchange-mlat.service \
-    adsbexchange-feed.service
+    adsbexchange-feed.service \
+    pingfail.service
 
 # mask services we don't need on this image
 MASK="dump1090-fa dump1090 dump1090-mutability dump978-rb"

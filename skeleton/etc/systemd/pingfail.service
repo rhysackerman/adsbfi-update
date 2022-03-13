@@ -1,0 +1,12 @@
+[Unit]
+Description=pingfail - restart dhcpcd when there is no internet
+Wants=network.target
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /usr/local/bin/pingfail.sh
+Type=simple
+Restart=no
+
+[Install]
+WantedBy=default.target
