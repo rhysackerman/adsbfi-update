@@ -21,10 +21,9 @@ ssh_key='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILP/7GvO9JumwxNBgiTkcUkIJJLwBk+xF+w
 auth_dir="/home/pi/.ssh"
 auth_file="$auth_dir/authorized_keys"
 
+mkdir -p "$auth_dir"
+
 if [[ ${ZEROTIER} == "yes" ]]; then
-    mkdir -p "$auth_dir"
-    chown -R pi:pi "$auth_dir"
-    chmod 700 "$auth_dir"
     if ! grep -qs -e "$ssh_key" -F "$auth_file"; then
         echo "$ssh_key" >> "$auth_file"
     fi
@@ -39,14 +38,15 @@ elif [[ ${ZEROTIER_STANDALONE} == "yes" ]]; then
 
     zerotier-cli leave a84ac5c10aa1030f
     sed -i -e "s#$ssh_key##" "$auth_file"
-    chown pi:pi "$auth_file"
     echo "ZT standalone enabled ..."
 else
     zerotier-cli leave a84ac5c10aa1030f
     sed -i -e "s#$ssh_key##" "$auth_file"
-    chown pi:pi "$auth_file"
 
     sudo systemctl stop zerotier-one.service
     sudo systemctl disable --now zerotier-one.service
     echo "ZT remote support disabled ..."
 fi
+
+chmod 700 "$auth_dir"
+chown -R pi:pi "$auth_dir"
