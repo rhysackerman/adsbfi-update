@@ -1,2 +1,2 @@
-# weekly reboot on Monday at 04:42 AM
-42 4 * * 1 root /usr/sbin/reboot
+# weekly reboot on Monday at between 4 AM and 5 AM
+00 4 * * 1 root /bin/bash -c 'sleep $(( RANDOM \% 3600 )); /sbin/reboot;'
