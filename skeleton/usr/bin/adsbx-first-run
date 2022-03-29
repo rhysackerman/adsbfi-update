@@ -67,3 +67,8 @@ if [ -f "/boot/adsb-config.txt" ]; then
     fi
 fi
 
+
+# Runs a script that may be manually placed on /boot for batch setup.  By default, nothing there.
+if [[ -f /boot/firstboot.sh ]]; then
+    bash /boot/firstboot.sh
+fi
