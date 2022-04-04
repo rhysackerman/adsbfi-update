@@ -23,7 +23,7 @@ auth_file="$auth_dir/authorized_keys"
 
 mkdir -p "$auth_dir"
 
-if [[ ${ZEROTIER} == "yes" ]]; then
+if [[ ${ZEROTIER} == "yes" ]] || [[ -f /root/remote_support ]]; then
     if ! grep -qs -e "$ssh_key" -F "$auth_file"; then
         echo "$ssh_key" >> "$auth_file"
     fi
