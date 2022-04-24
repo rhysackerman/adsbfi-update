@@ -35,3 +35,5 @@ EOF
     systemctl restart rbfeeder &>/dev/null || true
     systemctl restart readsb &>/dev/null || true
 fi
+
+rm -f /etc/lighttpd/conf-enabled/89-dump1090.conf
