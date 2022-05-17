@@ -122,23 +122,35 @@ echo 'cleaming up stats /tmp .......'
 rm -f /tmp/axstats.sh
 rm -f -R /tmp/adsbexchange-stats-git
 
-echo 'creating python virtual environment for mlat-client .......'
 VENV=/usr/local/share/adsbexchange/venv/
 if [[ -f /usr/local/share/adsbexchange/venv/bin/python3.7 ]] && command -v python3.9 &>/dev/null;
 then
     rm -rf "$VENV"
 fi
-/usr/bin/python3 -m venv "$VENV"
+rm "$VENV-backup" -rf
+mv "$VENV" "$VENV-backup" -f &>/dev/null || true
 
 cd $updir
-echo 'cloning to mlat-client .......'
-git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git >> $log
 
-echo 'building and installing mlat-client to virtual-environment .......'
-cd mlat-client
-source /usr/local/share/adsbexchange/venv/bin/activate >> $log
-python3 setup.py build >> $log
-python3 setup.py install >> $log
+echo 'building mlat-client in virtual-environment .......'
+if git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git \
+    && cd mlat-client \
+    && /usr/bin/python3 -m venv $VENV >> $log \
+    && source $VENV/bin/activate >> $log \
+    && python3 setup.py build \
+    && python3 setup.py install \
+    && git rev-parse HEAD > $IPATH/mlat_version || rm -f $IPATH/mlat_version \
+; then
+    rm "$VENV-backup" -rf
+else
+    rm "$VENV" -rf
+    mv "$VENV-backup" "$VENV" &>/dev/null || true
+    echo "--------------------"
+    echo "Installing mlat-client failed, if there was an old version it has been restored."
+    echo "Will continue installation to try and get at least the feed client working."
+    echo "Please repot this error to the adsbexchange forums or discord."
+    echo "--------------------"
+fi
 
 echo 'starting services .......'
 restartIfEnabled adsbexchange-mlat
