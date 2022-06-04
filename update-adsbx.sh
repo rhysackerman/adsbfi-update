@@ -23,7 +23,7 @@ function aptInstall() {
     fi
 }
 
-packages="git make gcc libusb-1.0-0 libusb-1.0-0-dev librtlsdr0 librtlsdr-dev libncurses5 libncurses5-dev zlib1g zlib1g-dev python3-dev python3-venv"
+packages="git make gcc libusb-1.0-0 libusb-1.0-0-dev librtlsdr0 librtlsdr-dev libncurses-dev zlib1g zlib1g-dev python3-dev python3-venv"
 aptInstall $packages
 
 echo '########################################'
