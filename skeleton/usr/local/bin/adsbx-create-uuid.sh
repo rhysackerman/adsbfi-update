@@ -1,28 +1,20 @@
 #!/bin/bash
 
-UUID_FILE="/boot/adsbx-uuid"
-
-function aptInstall() {
-    if ! apt install -y --no-install-recommends --no-install-suggests "$@"; then
-        apt update
-        apt install -y --no-install-recommends --no-install-suggests "$@"
+if [ -f /boot/adsb-config.txt ]; then
+    UUID_FILE="/boot/adsbx-uuid"
+else
+    mkdir -p /usr/local/share/adsbexchange
+    UUID_FILE="/usr/local/share/adsbexchange/adsbx-uuid"
+    # move old file position
+    if [ -f /boot/adsbx-uuid ]; then
+        mv -f /boot/adsbx-uuid $UUID_FILE
     fi
-}
+fi
+
 function generateUUID() {
-    # Let's make sure the UUID tools are installed...
-    if ! command -v uuidgen &>/dev/null; then
-        echo "Can't find uuidgen in path, trying to install uuidgen..."
-        aptInstall uuid-runtime
-        if ! command -v uuidgen &>/dev/null; then
-            echo "Failed to install uuid-runtime package - need manual intervention!"
-            sleep 60
-            exit 10
-        fi
-    fi
-
     rm -f $UUID_FILE
     sleep 0.$RANDOM; sleep 0.$RANDOM
-    UUID=$(uuidgen)
+    UUID=$(cat /proc/sys/kernel/random/uuid)
     echo New UUID: $UUID
     echo $UUID > $UUID_FILE
 }
