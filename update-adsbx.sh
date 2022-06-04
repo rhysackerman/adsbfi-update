@@ -6,6 +6,13 @@ if [[ "$(id -u)" != "0" ]]; then
     exec sudo bash "$BASH_SOURCE"
 fi
 
+# let's do all of this in a clean directory:
+updir=/tmp/update-adsbx
+
+rm -rf $updir
+mkdir -p $updir
+cd $updir
+
 # in case /var/log is full ... delete some logs
 echo test > /var/log/.test 2>/dev/null || rm -f /var/log/*.log
 
@@ -25,22 +32,6 @@ function aptInstall() {
 
 packages="git make gcc libusb-1.0-0 libusb-1.0-0-dev librtlsdr0 librtlsdr-dev libncurses-dev zlib1g zlib1g-dev python3-dev python3-venv"
 aptInstall $packages
-
-echo '########################################'
-echo 'FULL LOG ........'
-echo 'located at /tmp/adsbx_update_log .......'
-echo '########################################'
-echo '..'
-
-# let's do all of this in a clean directory:
-updir=/tmp/update-adsbx
-log=/tmp/adsbx_update_log
-
-rm -rf $updir
-mkdir -p $updir
-cd $updir
-
-rm -f $log
 
 git clone --quiet --depth 1 https://github.com/ADSBexchange/adsbx-update.git
 cd adsbx-update
@@ -71,16 +62,16 @@ for service in $MASK; do
 done &>/dev/null
 
 cd $updir
-git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git >> $log
+git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git
 
 echo 'compiling readsb (this can take a while) .......'
 
 cd readsb
 
 if dpkg --print-architecture | grep -qs armhf; then
-    make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"  >> $log
+    make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-mcpu=arm1176jzf-s -mfpu=vfp"
 else
-    make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes OPTIMIZE=""  >> $log
+    make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes OPTIMIZE=""
 fi
 
 echo 'copying new readsb binaries ......'
@@ -115,8 +106,8 @@ cd $updir
 rm -rf $updir/readsb
 
 echo 'updating adsbx stats .......'
-wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh >> $log
-bash /tmp/axstats.sh >> $log
+wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh
+bash /tmp/axstats.sh
 
 echo 'cleaming up stats /tmp .......'
 rm -f /tmp/axstats.sh
@@ -135,8 +126,8 @@ cd $updir
 echo 'building mlat-client in virtual-environment .......'
 if git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git \
     && cd mlat-client \
-    && /usr/bin/python3 -m venv $VENV >> $log \
-    && source $VENV/bin/activate >> $log \
+    && /usr/bin/python3 -m venv $VENV  \
+    && source $VENV/bin/activate  \
     && python3 setup.py build \
     && python3 setup.py install \
     && git rev-parse HEAD > $IPATH/mlat_version || rm -f $IPATH/mlat_version \
@@ -161,9 +152,9 @@ rm -f -R $updir/mlat-client
 echo 'update uat ...'
 
 cd $updir
-git clone https://github.com/adsbxchange/uat2esnt.git >> $log
+git clone https://github.com/adsbxchange/uat2esnt.git
 cd uat2esnt
-make uat2esnt >> $log
+make uat2esnt
 cp -T -f uat2esnt /usr/local/bin/uat2esnt
 
 cd $updir
@@ -173,7 +164,7 @@ echo 'restart uat services .......'
 restartIfEnabled adsbexchange-978-convert
 
 echo 'update tar1090 ...........'
-bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"  >> $log
+bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 
 
 # the following doesn't apply for chroot (image creation)
@@ -190,7 +181,6 @@ echo "#####################################"
 echo '--------------------------------------------'
 echo '--------------------------------------------'
 echo '             UPDATE COMPLETE'
-echo "      FULL LOG:  $log"
 echo '--------------------------------------------'
 echo '--------------------------------------------'
 
