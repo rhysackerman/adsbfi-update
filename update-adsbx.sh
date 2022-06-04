@@ -178,6 +178,8 @@ echo "#####################################"
 sed -e 's$^$https://www.adsbexchange.com/api/feeders/?feed=$' /boot/adsbx-uuid
 echo "#####################################"
 
+echo "8.2.$(date '+%y%m%d')" > /boot/adsbx-version-decoder
+
 echo '--------------------------------------------'
 echo '--------------------------------------------'
 echo '             UPDATE COMPLETE'
