@@ -42,7 +42,9 @@ find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T 
 # remove strange dhcpcd wait.conf in case it's there
 rm -f /etc/systemd/system/dhcpcd.service.d/wait.conf
 
-systemctl disable --now adsbexchange-978-convert.service
+if [[ -f /etc/systemd/system/adsbexchange-978-convert.service ]]; then
+    systemctl disable --now adsbexchange-978-convert.service &>/dev/null || true
+fi
 rm -f /etc/systemd/system/adsbexchange-978-convert.service
 rm -f /usr/local/bin/adsbexchange-978-convert.sh
 
