@@ -36,7 +36,7 @@ if [ -f "/boot/adsb-config.txt" ]; then
 
     . /boot/adsb-config.txt
 
-    SERVICES_978="dump978-fa adsbexchange-978 adsbexchange-978-convert tar1090-978"
+    SERVICES_978="dump978-fa adsbexchange-978 tar1090-978"
     if [ ${DUMP978} = "yes" ]; then
         services-handle enable "$SERVICES_978"
     else

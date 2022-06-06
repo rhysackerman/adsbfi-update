@@ -12,7 +12,7 @@ fi
 exec /usr/bin/adsbx-978 \
     $RECEIVER_978_OPTIONS $DECODER_978_OPTIONS $NET_978_OPTIONS $JSON_978_OPTIONS \
     --lat ${LATITUDE} --lon ${LONGITUDE} \
-    --net-ri-port $AVR_978_IN_PORT \
+    --net-connector 127.0.0.1,30978,uat_in \
     --write-json /run/adsbexchange-978 --quiet
 
     #/usr/local/share/adsb-exchange-978/readsb \
