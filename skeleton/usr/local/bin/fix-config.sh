@@ -39,3 +39,4 @@ fi
 
 rm -f /etc/cron.d/fr24feed_updater
 rm -f /etc/lighttpd/conf-enabled/89-dump1090.conf
+rm -f /etc/lighttpd/conf-enabled/89-skyaware.conf
