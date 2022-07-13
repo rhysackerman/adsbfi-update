@@ -57,6 +57,13 @@ if [ -f "/boot/adsb-config.txt" ]; then
         services-handle disable "$SERVICES_1090"
     fi
 
+    SERVICES_GRAPHS="graphs1090 collectd"
+    if [[ "${GRAPHS1090}" != "no" ]]; then
+        services-handle enable "$SERVICES_GRAPHS"
+    else
+        services-handle disable "$SERVICES_GRAPHS"
+    fi
+
     if false; then
         SERVICES_PROMG="prometheus prometheus-node-exporter prometheus-dump1090-exporter grafana-server"
         if [[ -z ${PROMG} ]] || [[ ${PROMG} == "yes" ]]; then

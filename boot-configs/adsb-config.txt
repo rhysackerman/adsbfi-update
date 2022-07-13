@@ -51,3 +51,6 @@ ZEROTIER_STANDALONE=no
 
 # Use Custom LED indications?
 CUSTOMLEDS=no
+
+# Enable graphs1090?
+GRAPHS1090=yes

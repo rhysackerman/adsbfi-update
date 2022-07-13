@@ -36,8 +36,8 @@ aptInstall $packages
 git clone --quiet --depth 1 https://github.com/ADSBexchange/adsbx-update.git
 cd adsbx-update
 
-find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}'
-find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}'
+find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' >/dev/null
+find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}' >/dev/null
 
 # remove strange dhcpcd wait.conf in case it's there
 rm -f /etc/systemd/system/dhcpcd.service.d/wait.conf
@@ -160,6 +160,9 @@ cd $updir
 echo 'update tar1090 ...........'
 bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 
+if [[ -f /boot/adsb-config.txt ]] && ! grep -qs -e 'GRAPHS1090' /boot/adsb-config.txt; then
+    echo "GRAPHS1090=yes" >> /boot/adsb-config.txt
+fi
 
 # the following doesn't apply for chroot (image creation)
 if ischroot; then
