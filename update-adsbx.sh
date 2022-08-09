@@ -160,9 +160,15 @@ cd $updir
 echo 'update tar1090 ...........'
 bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 
-if [[ -f /boot/adsb-config.txt ]] && ! grep -qs -e 'GRAPHS1090' /boot/adsb-config.txt; then
-    echo "GRAPHS1090=yes" >> /boot/adsb-config.txt
+if [[ -f /boot/adsb-config.txt ]]; then
+    if ! grep -qs -e 'GRAPHS1090' /boot/adsb-config.txt; then
+        echo "GRAPHS1090=yes" >> /boot/adsb-config.txt
+    fi
+    if ! grep -qs -e "ZEROTIER_STANDALONE" /boot/adsb-config.txt; then
+        echo "ZEROTIER_STANDALONE=no" >> /boot/adsb-config.txt
+    fi
 fi
+
 
 # the following doesn't apply for chroot (image creation)
 if ischroot; then
