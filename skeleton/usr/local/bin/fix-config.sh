@@ -2,7 +2,7 @@
 
 # configure fr24feed to use readsb
 
-if grep -qs -e 'receiver.*dvb' /etc/fr24feed.ini; then
+if grep -qs -e 'receiver.*dvb' -e 'bs.*yes' -e 'raw.*yes' /etc/fr24feed.ini; then
     chmod a+rw /etc/fr24feed.ini || true
     apt-get install -y dos2unix &>/dev/null && dos2unix /etc/fr24feed.ini &>/dev/null || true
 
@@ -15,8 +15,13 @@ if grep -qs -e 'receiver.*dvb' /etc/fr24feed.ini; then
     pkill -9 fr24feed || true
     apt purge -y dump1090 &>/dev/null
     apt purge -y dump1090-mutability &>/dev/null
+    pkill -9 fr24feed || true
     systemctl restart fr24feed &>/dev/null || true
     systemctl restart readsb &>/dev/null || true
+fi
+
+if grep -qs -e 'fr24feed' /etc/apt/sources.list; then
+    sed -i -e '/fr24feed/d' /etc/apt/sources.list
 fi
 
 # configure rbfeeder to use readsb
