@@ -36,7 +36,7 @@ aptInstall $packages
 git clone --quiet --depth 1 https://github.com/ADSBexchange/adsbx-update.git
 cd adsbx-update
 
-find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' >/dev/null
+find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' &>/dev/null
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}' >/dev/null
 
 # remove strange dhcpcd wait.conf in case it's there
