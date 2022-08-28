@@ -75,7 +75,7 @@ echo 'compiling readsb (this can take a while) .......'
 cd readsb
 
 if dpkg --print-architecture | grep -qs armhf; then
-    make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-O3 -mcpu=arm1176jzf-s -mfpu=vfp"
+    make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-O2 -mcpu=arm1176jzf-s -mfpu=vfp"
 else
     make -j3 AIRCRAFT_HASH_BITS=12 RTLSDR=yes OPTIMIZE="-O3"
 fi
