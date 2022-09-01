@@ -39,6 +39,13 @@ cd adsbx-update
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' &>/dev/null
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}' >/dev/null
 
+# make sure the config has all the options, if not add them with default value:
+for line in $(grep -v -e '^#' -e '^$' boot-configs/adsb-config.txt); do
+    if ! grep -qs "$(echo $line | cut -d= -f1)" /boot/adsb-config.txt; then
+        echo $line >> /boot/adsb-config.txt
+    fi
+done
+
 # remove strange dhcpcd wait.conf in case it's there
 rm -f /etc/systemd/system/dhcpcd.service.d/wait.conf
 
