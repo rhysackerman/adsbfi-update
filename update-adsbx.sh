@@ -33,7 +33,7 @@ function aptInstall() {
 packages="git make gcc libusb-1.0-0 libusb-1.0-0-dev librtlsdr0 librtlsdr-dev ncurses-bin ncurses-dev zlib1g zlib1g-dev python3-dev python3-venv libzstd-dev libzstd1"
 aptInstall $packages
 
-git clone --quiet --depth 1 https://github.com/ADSBexchange/adsbx-update.git
+git clone --quiet --depth 1 https://github.com/adsbexchange/adsbx-update.git
 cd adsbx-update
 
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' &>/dev/null
