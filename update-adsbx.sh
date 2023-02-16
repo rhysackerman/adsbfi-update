@@ -119,7 +119,7 @@ cd $updir
 rm -rf $updir/readsb
 
 echo 'updating adsbx stats .......'
-wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbxchange/adsbexchange-stats/master/stats.sh
+wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbexchange/adsbexchange-stats/master/stats.sh
 bash /tmp/axstats.sh
 
 echo 'cleaming up stats /tmp .......'
