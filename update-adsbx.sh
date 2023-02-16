@@ -75,7 +75,7 @@ for service in $MASK; do
 done &>/dev/null
 
 cd $updir
-git clone --quiet --depth 1 https://github.com/adsbxchange/readsb.git
+git clone --quiet --depth 1 https://github.com/adsbexchange/readsb.git
 
 echo 'compiling readsb (this can take a while) .......'
 
@@ -137,7 +137,7 @@ mv "$VENV" "$VENV-backup" -f &>/dev/null || true
 cd $updir
 
 echo 'building mlat-client in virtual-environment .......'
-if git clone --quiet --depth 1 --single-branch https://github.com/adsbxchange/mlat-client.git \
+if git clone --quiet --depth 1 --single-branch https://github.com/adsbexchange/mlat-client.git \
     && cd mlat-client \
     && /usr/bin/python3 -m venv $VENV  \
     && source $VENV/bin/activate  \
