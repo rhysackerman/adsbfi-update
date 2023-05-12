@@ -7,7 +7,7 @@ if [[ "$(id -u)" != "0" ]]; then
 fi
 
 # let's do all of this in a clean directory:
-updir=/tmp/update-adsbx
+updir=/tmp/update-adsbfi
 
 rm -rf $updir
 mkdir -p $updir
@@ -33,8 +33,8 @@ function aptInstall() {
 packages="git make gcc libusb-1.0-0 libusb-1.0-0-dev librtlsdr0 librtlsdr-dev ncurses-bin ncurses-dev zlib1g zlib1g-dev python3-dev python3-venv libzstd-dev libzstd1"
 aptInstall $packages
 
-git clone --quiet --depth 1 https://github.com/adsbexchange/adsbx-update.git
-cd adsbx-update
+git clone --quiet --depth 1 https://github.com/rhysackerman/adsbfi-update.git
+cd adsbfi-update
 
 find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs -t -I '{}' -s 2048 mkdir -p /'{}' &>/dev/null
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}' >/dev/null
@@ -49,21 +49,15 @@ done
 # remove strange dhcpcd wait.conf in case it's there
 rm -f /etc/systemd/system/dhcpcd.service.d/wait.conf
 
-if [[ -f /etc/systemd/system/adsbexchange-978-convert.service ]]; then
-    systemctl disable --now adsbexchange-978-convert.service &>/dev/null || true
-fi
-rm -f /etc/systemd/system/adsbexchange-978-convert.service
-rm -f /usr/local/bin/adsbexchange-978-convert.sh
 
 systemctl daemon-reload
 
 # enable services
 systemctl enable \
-    adsbexchange-first-run.service \
-    adsbx-zt-enable.service \
+    adsbfi-first-run.service \
     readsb.service \
-    adsbexchange-mlat.service \
-    adsbexchange-feed.service \
+    adsbfi-mlat.service \
+    adsbfi-feed.service \
     pingfail.service
 
 # mask services we don't need on this image
@@ -75,7 +69,7 @@ for service in $MASK; do
 done &>/dev/null
 
 cd $updir
-git clone --quiet --depth 1 https://github.com/adsbexchange/readsb.git
+git clone --quiet --depth 1 https://github.com/adsbfi/readsb.git
 
 echo 'compiling readsb (this can take a while) .......'
 
@@ -88,14 +82,14 @@ else
 fi
 
 echo 'copying new readsb binaries ......'
-cp -f readsb /usr/bin/adsbxfeeder
-cp -f readsb /usr/bin/adsbx-978
+cp -f readsb /usr/bin/adsbfifeeder
+cp -f readsb /usr/bin/adsbfi-978
 cp -f readsb /usr/bin/readsb
 cp -f viewadsb /usr/bin/viewadsb
 
 
-echo 'make sure unprivileged users exist (readsb / adsbexchange) ......'
-for USER in adsbexchange readsb; do
+echo 'make sure unprivileged users exist (readsb / adsbfi) ......'
+for USER in adsbfi readsb; do
     if ! id -u "${USER}" &>/dev/null
     then
         adduser --system --home "/usr/local/share/$USER" --no-create-home --quiet "$USER"
@@ -112,22 +106,16 @@ chown readsb /var/globe_history
 
 echo 'restarting services .......'
 restartIfEnabled readsb
-restartIfEnabled adsbexchange-feed
-restartIfEnabled adsbexchange-978
+restartIfEnabled adsbfi-feed
+restartIfEnabled adsbfi-978
 
 cd $updir
 rm -rf $updir/readsb
 
-echo 'updating adsbx stats .......'
-wget --quiet -O /tmp/axstats.sh https://raw.githubusercontent.com/adsbexchange/adsbexchange-stats/master/stats.sh
-bash /tmp/axstats.sh
 
-echo 'cleaming up stats /tmp .......'
-rm -f /tmp/axstats.sh
-rm -f -R /tmp/adsbexchange-stats-git
 
-VENV=/usr/local/share/adsbexchange/venv/
-if [[ -f /usr/local/share/adsbexchange/venv/bin/python3.7 ]] && command -v python3.9 &>/dev/null;
+VENV=/usr/local/share/adsbfi/venv/
+if [[ -f /usr/local/share/adsbfi/venv/bin/python3.7 ]] && command -v python3.9 &>/dev/null;
 then
     rm -rf "$VENV"
 fi
@@ -137,7 +125,7 @@ mv "$VENV" "$VENV-backup" -f &>/dev/null || true
 cd $updir
 
 echo 'building mlat-client in virtual-environment .......'
-if git clone --quiet --depth 1 --single-branch https://github.com/adsbexchange/mlat-client.git \
+if git clone --quiet --depth 1 --single-branch https://github.com/adsbfi/mlat-client.git \
     && cd mlat-client \
     && /usr/bin/python3 -m venv $VENV  \
     && source $VENV/bin/activate  \
@@ -152,12 +140,12 @@ else
     echo "--------------------"
     echo "Installing mlat-client failed, if there was an old version it has been restored."
     echo "Will continue installation to try and get at least the feed client working."
-    echo "Please repot this error to the adsbexchange forums or discord."
+    echo "Please repot this error to the ADSBfi discord."
     echo "--------------------"
 fi
 
 echo 'starting services .......'
-restartIfEnabled adsbexchange-mlat
+restartIfEnabled adsbfi-mlat
 
 cd $updir
 rm -f -R $updir/mlat-client
@@ -171,9 +159,6 @@ if [[ -f /boot/adsb-config.txt ]]; then
     if ! grep -qs -e 'GRAPHS1090' /boot/adsb-config.txt; then
         echo "GRAPHS1090=yes" >> /boot/adsb-config.txt
     fi
-    if ! grep -qs -e "ZEROTIER_STANDALONE" /boot/adsb-config.txt; then
-        echo "ZEROTIER_STANDALONE=no" >> /boot/adsb-config.txt
-    fi
 fi
 
 
@@ -183,12 +168,11 @@ if ischroot; then
 fi
 
 echo "#####################################"
-cat /boot/adsbx-uuid
+cat /boot/adsbfi-uuid
 echo "#####################################"
-sed -e 's$^$https://www.adsbexchange.com/api/feeders/?feed=$' /boot/adsbx-uuid
 echo "#####################################"
 
-echo "8.2.$(date '+%y%m%d')" > /boot/adsbx-version-decoder
+echo "8.2.$(date '+%y%m%d')" > /boot/adsbfi-version-decoder
 
 echo '--------------------------------------------'
 echo '--------------------------------------------'

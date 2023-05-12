@@ -11,11 +11,13 @@ apt autoremove -y
 apt clean -y
 
 echo -e "\n\n RESET UUID"
-rm -f /boot/adsbx-uuid
+rm -f /boot/adsbfi-uuid
 
-echo -e "\n\n RESET ZT"
-rm -f /var/lib/zerotier-one/identity.*
-rm -f /var/lib/zerotier-one/authtoken.secret
+
+#ZT removed May 12th - RA
+#echo -e "\n\n RESET ZT"
+#rm -f /var/lib/zerotier-one/identity.*
+#rm -f /var/lib/zerotier-one/authtoken.secret
 
 echo -e "\n RESET SSH"
 rm /etc/ssh/ssh_host_*
@@ -25,11 +27,11 @@ rm /home/pi/.bash_history
 
 
 # fail if this directory doesn't exist
-if ! [[ -d /adsbexchange/update/boot-configs ]]; then
+if ! [[ -d /adsbfi/update/boot-configs ]]; then
     exit 1
 fi
 
-pushd /adsbexchange/update/boot-configs &>/dev/null
+pushd /adsbfi/update/boot-configs &>/dev/null
 for file in *; do
     echo -e "\n RESET /boot/$file"
     cp --remove-destination -f -T "$file" "/boot/$file"
