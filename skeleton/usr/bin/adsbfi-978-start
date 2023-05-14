@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -f "/boot/adsb-config.txt" ]; then
-    . /boot/adsb-config.txt
+if [ -f "/boot/adsbfi-config.txt" ]; then
+    . /boot/adsbfi-config.txt
     . /boot/adsbfi-978env
 
 else

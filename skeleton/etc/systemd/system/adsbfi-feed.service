@@ -6,7 +6,7 @@ After=adsbfi-first-run.service
 
 [Service]
 User=adsbfi
-EnvironmentFile=/boot/adsb-config.txt
+EnvironmentFile=/boot/adsbfi-config.txt
 RuntimeDirectory=adsbfi-feed
 RuntimeDirectoryMode=0755
 ExecStart=/usr/local/bin/adsbfi-feed.sh

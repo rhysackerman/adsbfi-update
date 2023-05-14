@@ -23,18 +23,18 @@ function services-handle() {
 }
 bash /usr/local/bin/adsbfi-create-uuid.sh
 bash /usr/local/bin/fix-config.sh
-if [ -f "/boot/adsb-config.txt" ]; then
+if [ -f "/boot/adsbfi-config.txt" ]; then
 
     # remove spaces from non-comment lines:
-    sed -e '/^#/!s/ //g' /boot/adsb-config.txt > /run/adsb-config.txt
+    sed -e '/^#/!s/ //g' /boot/adsbfi-config.txt > /run/adsbfi-config.txt
     # cater to idiots
-    sed -i -e 's/NO/no/g' -e 's/YES/yes/g' /run/adsb-config.txt
+    sed -i -e 's/NO/no/g' -e 's/YES/yes/g' /run/adsbfi-config.txt
     # only do a write if necessary
-    if ! cmp /boot/adsb-config.txt /run/adsb-config.txt; then
-        mv -f /run/adsb-config.txt /boot/adsb-config.txt
+    if ! cmp /boot/adsbfi-config.txt /run/adsbfi-config.txt; then
+        mv -f /run/adsbfi-config.txt /boot/adsbfi-config.txt
     fi
 
-    . /boot/adsb-config.txt
+    . /boot/adsbfi-config.txt
 
     SERVICES_978="dump978-fa adsbfi-978 tar1090-978"
     if [ ${DUMP978} == "yes" ]; then

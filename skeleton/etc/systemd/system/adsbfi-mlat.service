@@ -6,7 +6,7 @@ After=network.target
 After=adsbfi-first-run.service
 
 [Service]
-EnvironmentFile=/boot/adsb-config.txt
+EnvironmentFile=/boot/adsbfi-config.txt
 EnvironmentFile=/boot/adsbfi-env
 User=adsbfi
 ExecStart=/usr/local/bin/mlat.sh

@@ -40,9 +40,9 @@ find skeleton -type d | cut -d / -f1 --complement | grep -v '^skeleton' | xargs 
 find skeleton -type f | cut -d / -f1 --complement | xargs -I '{}' -s 2048 cp -T --remove-destination -v skeleton/'{}' /'{}' >/dev/null
 
 # make sure the config has all the options, if not add them with default value:
-for line in $(grep -v -e '^#' -e '^$' boot-configs/adsb-config.txt); do
-    if ! grep -qs "$(echo $line | cut -d= -f1)" /boot/adsb-config.txt; then
-        echo $line >> /boot/adsb-config.txt
+for line in $(grep -v -e '^#' -e '^$' boot-configs/adsbfi-config.txt); do
+    if ! grep -qs "$(echo $line | cut -d= -f1)" /boot/adsbfi-config.txt; then
+        echo $line >> /boot/adsbfi-config.txt
     fi
 done
 
@@ -155,9 +155,9 @@ cd $updir
 echo 'update tar1090 ...........'
 bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
 
-if [[ -f /boot/adsb-config.txt ]]; then
-    if ! grep -qs -e 'GRAPHS1090' /boot/adsb-config.txt; then
-        echo "GRAPHS1090=yes" >> /boot/adsb-config.txt
+if [[ -f /boot/adsbfi-config.txt ]]; then
+    if ! grep -qs -e 'GRAPHS1090' /boot/adsbfi-config.txt; then
+        echo "GRAPHS1090=yes" >> /boot/adsbfi-config.txt
     fi
 fi
 

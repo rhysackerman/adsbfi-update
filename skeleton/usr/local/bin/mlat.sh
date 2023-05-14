@@ -3,8 +3,8 @@ if [[ "$MLAT_MARKER" == "no" ]]; then
     PRIVACY="--privacy"
 fi
 
-if grep -qs -e 'LATITUDE' /boot/adsb-config.txt &>/dev/null && [[ -f /boot/adsbfi-env ]]; then
-    source /boot/adsb-config.txt
+if grep -qs -e 'LATITUDE' /boot/adsbfi-config.txt &>/dev/null && [[ -f /boot/adsbfi-env ]]; then
+    source /boot/adsbfi-config.txt
     source /boot/adsbfi-env
 else
     source /etc/default/adsbfi

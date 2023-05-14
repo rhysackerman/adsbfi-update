@@ -8,7 +8,7 @@ After=network.target
 After=adsbfi-first-run.service
 
 [Service]
-EnvironmentFile=/boot/adsb-config.txt
+EnvironmentFile=/boot/adsbfi-config.txt
 EnvironmentFile=/boot/adsbfi-978env
 User=dump978
 ExecStart=/usr/bin/dump978-fa $RECEIVER_OPTIONS $DECODER_OPTIONS $NET_OPTIONS
