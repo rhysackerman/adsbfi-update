@@ -1,38 +1,14 @@
-#!/bin/bash
-
-if grep -qs -e 'LATITUDE' /boot/adsbfi-config.txt &>/dev/null && [[ -f /boot/adsbfi-env ]]; then
-    source /boot/adsbfi-config.txt
-    source /boot/adsbfi-env
-else
-    source /etc/default/adsbfi
-fi
-
-if ! [[ -d /run/adsbfi-feed/ ]]; then
-    mkdir -p /run/adsbfi-feed
-fi
-
-if [[ -z $INPUT ]]; then
-    INPUT="127.0.0.1:30005"
-fi
-
-INPUT_IP=$(echo $INPUT | cut -d: -f1)
-INPUT_PORT=$(echo $INPUT | cut -d: -f2)
-SOURCE="--net-connector $INPUT_IP,$INPUT_PORT,beast_in,silent_fail"
-
-if [[ -z $UAT_INPUT ]]; then
-    UAT_INPUT="127.0.0.1:30978"
-fi
-
-UAT_IP=$(echo $UAT_INPUT | cut -d: -f1)
-UAT_PORT=$(echo $UAT_INPUT | cut -d: -f2)
-UAT_SOURCE="--net-connector $UAT_IP,$UAT_PORT,uat_in,silent_fail"
-
-
-exec /usr/local/share/adsbfi/feed-adsbfi --net --net-only --quiet \
-    --write-json /run/adsbfi-feed \
-    --net-beast-reduce-interval $REDUCE_INTERVAL \
-    $TARGET $NET_OPTIONS \
-    --lat "$LATITUDE" --lon "$LONGITUDE" \
-    $UUID_FILE $JSON_OPTIONS \
-    $UAT_SOURCE \
-    $SOURCE \
+#!/bin/sh
+while wait
+do
+    sleep 30 &
+    /usr/bin/adsbfi-feeder --quiet --net --net-only \
+        --db-file=none --max-range 450 \
+        --net-beast-reduce-interval 0.5 \
+        --net-connector feed.adsb.fi,30004,beast_reduce_out \
+        --net-connector 127.0.0.1,30005,beast_in \
+        --net-ro-interval 0.2 --net-ri-port 0 --net-ro-port 0 \
+        --net-sbs-port 0 --net-bi-port 0 --net-bo-port 0 \
+        --json-location-accuracy 2 --write-json /run/adsbfi-feed \
+        --lat $LATITUDE --lon $LONGITUDE
+done
