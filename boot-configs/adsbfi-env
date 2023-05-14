@@ -1,6 +1,6 @@
 # Default no serial single SDR mode
 # use # to comment out for 1090 mode
-RECEIVER_OPTIONS="--device 1090 --device-type rtlsdr --ppm 0"
+RECEIVER_OPTIONS="--device-type rtlsdr --ppm 0"
 
 # 1090 serialed SDR
 # Remove # for 1090 serial mode
