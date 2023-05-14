@@ -82,7 +82,7 @@ else
 fi
 
 echo 'copying new readsb binaries ......'
-cp -f readsb /usr/bin/adsbfifeeder
+cp -f readsb /usr/bin/adsbfi-feeder
 cp -f readsb /usr/bin/adsbfi-978
 cp -f readsb /usr/bin/readsb
 cp -f viewadsb /usr/bin/viewadsb
