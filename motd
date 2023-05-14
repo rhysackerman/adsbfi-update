@@ -17,7 +17,7 @@
 
 WiFi:  place wpa_supplicant.conf in /boot
 
-Config: adsb-config.txt located in /boot
+Config: adsbfi-config.txt located in /boot
 
 ALL CHANGES REQUIRE REBOOT
 
