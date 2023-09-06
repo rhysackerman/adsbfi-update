@@ -105,9 +105,9 @@ mkdir -p /var/globe_history
 chown readsb /var/globe_history
 
 echo 'restarting services .......'
-restartIfEnabled readsb
-restartIfEnabled adsbfi-feed
-restartIfEnabled adsbfi-978
+systemctl restart readsb
+systemctl restart adsbfi-feed
+systemctl restart adsbfi-978
 
 cd $updir
 rm -rf $updir/readsb
@@ -145,7 +145,7 @@ else
 fi
 
 echo 'starting services .......'
-restartIfEnabled adsbfi-mlat
+systemctl restart adsbfi-mlat
 
 cd $updir
 rm -f -R $updir/mlat-client
