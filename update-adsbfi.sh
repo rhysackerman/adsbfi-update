@@ -105,9 +105,9 @@ mkdir -p /var/globe_history
 chown readsb /var/globe_history
 
 echo 'restarting services .......'
-restartIfEnabled readsb
-restartIfEnabled adsbfi-feed
-restartIfEnabled adsbfi-978
+systemctl enable readsb
+systemctl enable adsbfi-feed
+systemctl enable adsbfi-978
 
 cd $updir
 rm -rf $updir/readsb
@@ -145,7 +145,7 @@ else
 fi
 
 echo 'starting services .......'
-restartIfEnabled adsbfi-mlat
+systemctl enable adsbfi-mlat
 
 cd $updir
 rm -f -R $updir/mlat-client
@@ -153,7 +153,7 @@ rm -f -R $updir/mlat-client
 cd $updir
 
 echo 'update tar1090 ...........'
-bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+bash -c "$(wget -nv -O - https://raw.githubusercontent.com/adsbfi/tar1090/master/install.sh)"
 
 if [[ -f /boot/adsbfi-config.txt ]]; then
     if ! grep -qs -e 'GRAPHS1090' /boot/adsbfi-config.txt; then
