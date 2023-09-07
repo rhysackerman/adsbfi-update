@@ -153,7 +153,7 @@ rm -f -R $updir/mlat-client
 cd $updir
 
 echo 'update tar1090 ...........'
-bash -c "$(wget -nv -O - https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh)"
+bash -c "$(wget -nv -O - https://raw.githubusercontent.com/adsbfi/tar1090/master/install.sh)"
 
 if [[ -f /boot/adsbfi-config.txt ]]; then
     if ! grep -qs -e 'GRAPHS1090' /boot/adsbfi-config.txt; then
