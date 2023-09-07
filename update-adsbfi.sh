@@ -105,9 +105,9 @@ mkdir -p /var/globe_history
 chown readsb /var/globe_history
 
 echo 'restarting services .......'
-systemctl restart readsb
-systemctl restart adsbfi-feed
-systemctl restart adsbfi-978
+restartIfEnabled readsb
+restartIfEnabled adsbfi-feed
+restartIfEnabled adsbfi-978
 
 cd $updir
 rm -rf $updir/readsb
@@ -140,12 +140,12 @@ else
     echo "--------------------"
     echo "Installing mlat-client failed, if there was an old version it has been restored."
     echo "Will continue installation to try and get at least the feed client working."
-    echo "Please repot this error to the ADSBfi discord."
+    echo "Please report this error to the ADSBfi discord."
     echo "--------------------"
 fi
 
 echo 'starting services .......'
-systemctl restart adsbfi-mlat
+restartIfEnabled adsbfi-mlat
 
 cd $updir
 rm -f -R $updir/mlat-client
